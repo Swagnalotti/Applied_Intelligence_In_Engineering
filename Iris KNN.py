@@ -1,0 +1,30 @@
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.datasets import load_iris
+
+# Load Iris dataset
+iris = load_iris()
+
+# Features: [sepal length, sepal width, petal length, petal width]
+X = iris.data
+
+# Target: 0 = Setosa, 1 = Versicolor, 2 = Virginica
+y = iris.target
+
+# 1. Split into training (60%) and temporary data (40%)
+X_train, X_temp, y_train, y_temp = train_test_split(X, y, test_size=0.4, random_state=42)
+
+# 2. Split temporary data into validation (20%) and testing (20%)
+X_val, X_test, y_val, y_test = train_test_split(X_temp, y_temp, test_size=0.5, random_state=42)
+
+# 3. Try different K values using validation data
+for k in [1, 3, 5]:
+    model = KNeighborsClassifier(n_neighbors=k)
+    # Learn patterns from training data
+    model.fit(X_train, y_train)
+    # Predict validation samples
+    val_prediction = model.predict(X_val)
+    # Measure accuracy
+    accuracy = accuracy_score(y_val, val_prediction)
+    print("K =", k, "Validation Accuracy =", accuracy)
